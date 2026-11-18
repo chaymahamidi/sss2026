@@ -1,0 +1,13 @@
+# Fase 1: Build dell'applicazione Angular con Node.js 20
+FROM node:20 AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build -- --configuration production
+
+# Fase 2: Server Nginx per distribuire i file compilati
+FROM nginx:alpine
+COPY --from=build /app/dist/some-banking-app/browser /usr/share/nginx/html/
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
