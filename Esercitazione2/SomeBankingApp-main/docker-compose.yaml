@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    image: banking-backend:latest
+    container_name: backend
+    expose:
+      - "8000"
+    networks:
+      - banking-net
+
+  frontend:
+    build: ./frontend
+    image: banking-frontend:latest
+    container_name: frontend
+    expose:
+      - "4200"
+    depends_on:
+      - backend
+    networks:
+      - banking-net
+
+  proxy:
+    build: ./proxy
+    image: banking-proxy:latest
+    container_name: proxy
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - banking-net
+
+networks:
+  banking-net:
+    driver: bridge
